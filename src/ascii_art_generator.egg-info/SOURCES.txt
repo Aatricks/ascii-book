@@ -1,0 +1,13 @@
+LICENSE
+README.md
+pyproject.toml
+src/ascii_art_generator/conversion.py
+src/ascii_art_generator/main.py
+src/ascii_art_generator/minimalistic.py
+src/ascii_art_generator.egg-info/PKG-INFO
+src/ascii_art_generator.egg-info/SOURCES.txt
+src/ascii_art_generator.egg-info/dependency_links.txt
+src/ascii_art_generator.egg-info/requires.txt
+src/ascii_art_generator.egg-info/top_level.txt
+tests/test_conversion.py
+tests/test_minimalistic.py

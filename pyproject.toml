@@ -1,0 +1,10 @@
+[project]
+name = "ascii-art-generator"
+version = "0.1.0"
+dependencies = [
+    "Pillow",
+    "numpy",
+    "opencv-python",
+    "rembg",
+    "onnxruntime",
+]
