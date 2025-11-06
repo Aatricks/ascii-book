@@ -27,6 +27,17 @@ def main():
 
     args = parser.parse_args()
 
+    import os
+    # Fix for PowerShell argument parsing where .\path becomes .path
+    if args.input_path.startswith('.') and not args.input_path.startswith('.\\') and not args.input_path.startswith('./'):
+        args.input_path = '.\\' + args.input_path[1:]
+    if args.output_path and args.output_path.startswith('.') and not args.output_path.startswith('.\\') and not args.output_path.startswith('./'):
+        args.output_path = '.\\' + args.output_path[1:]
+
+    args.input_path = os.path.abspath(args.input_path)
+    if args.output_path:
+        args.output_path = os.path.abspath(args.output_path)
+
     try:
         image = conversion.load_image(args.input_path)
         image = conversion.adjust_image(image, args.brightness, args.contrast, args.gamma)

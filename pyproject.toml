@@ -8,3 +8,6 @@ dependencies = [
     "rembg",
     "onnxruntime",
 ]
+
+[project.scripts]
+pyscii = "ascii_art_generator.main:main"
