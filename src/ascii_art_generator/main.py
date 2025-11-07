@@ -14,7 +14,8 @@ def main():
     parser.add_argument("-w", "--width", type=int, default=120, help="The desired width of the output image in characters.")
     parser.add_argument("-m", "--minimalistic", action="store_true", help="Enable minimalistic mode for subject isolation.")
     parser.add_argument("--bg-removal-method", choices=["simple", "ml"], default="ml", help="The method for background removal in minimalistic mode.")
-    parser.add_argument("--dilation-kernel-size", type=int, default=3, help="The kernel size for dilation in background removal.")
+    parser.add_argument("--ml-model", choices=["u2net", "u2netp", "u2net_human_seg", "u2net_cloth_seg", "silueta", "isnet-general-use", "isnet-anime", "sam", "birefnet-general", "birefnet-general-lite", "birefnet-portrait", "birefnet-dis", "birefnet-hrsod", "birefnet-cod", "birefnet-massive"], default="u2net", help="The ML model to use for background removal.")
+    parser.add_argument("--dilation-kernel-size", type=int, default=1, help="The kernel size for dilation in background removal.")
     parser.add_argument("--blur-kernel-size", type=int, default=5, help="The kernel size for Gaussian blur on the subject mask.")
     parser.add_argument("--retro", action="store_true", help="Use retro color mode.")
     parser.add_argument("--bw", action="store_true", help="Use black and white mode.")
@@ -56,7 +57,7 @@ def main():
                 background_mask = minimalistic.create_background_mask(resized_image)
                 output_image = conversion.draw_ascii_art(resized_image, ascii_chars, background_mask, args.retro, args.bw, args.gamma)
             else:
-                removed_bg_image = minimalistic.remove_background_ml(resized_image)
+                removed_bg_image = minimalistic.remove_background_ml(resized_image, args.ml_model)
                 background_mask = Image.fromarray((np.array(removed_bg_image.split()[-1]) == 0).astype(np.uint8) * 255)
                 refined_background_mask = minimalistic.refine_mask(background_mask, args.dilation_kernel_size)
                 output_image = conversion.draw_ascii_art(resized_image, ascii_chars, refined_background_mask, args.retro, args.bw, args.gamma)

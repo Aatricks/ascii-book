@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
-from rembg import remove
+from rembg import new_session, remove
 
 
 def create_background_mask(image, threshold=200):
@@ -18,6 +18,7 @@ def refine_mask(mask, dilation_kernel_size=3):
     dilated_mask = cv2.dilate(np.array(mask), kernel, iterations=1)
     return Image.fromarray(dilated_mask)
 
-def remove_background_ml(image):
+def remove_background_ml(image, model="birefnet-general"):
     """Remove the background from an image using a machine learning model."""
-    return remove(image)
+    session = new_session(model)
+    return remove(image, session=session, alpha_matting=True)
