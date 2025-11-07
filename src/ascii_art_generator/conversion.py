@@ -1,6 +1,7 @@
 import colorsys
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
+from tqdm import tqdm
 
 ASCII_CHARS = " .-=+*x#$&X@"
 
@@ -67,7 +68,7 @@ def image_to_ascii_chars(image):
     """Convert an image to a list of ASCII characters based on brightness."""
     width, height = image.size
     chars = []
-    for y in range(height):
+    for y in tqdm(range(height), desc="Converting image to ASCII characters"):
         for x in range(width):
             pixel = image.getpixel((x, y))
             if len(pixel) >= 3:
@@ -104,7 +105,7 @@ def draw_ascii_art(image, ascii_chars, background_mask=None, use_retro=False, us
 
 
 
-    for i, char in enumerate(ascii_chars):
+    for i, char in tqdm(enumerate(ascii_chars), desc="Drawing ASCII art", total=len(ascii_chars)):
         if background_pixels and background_pixels[i] > 0:
             continue
 
@@ -129,7 +130,7 @@ def print_ascii_art(image, use_retro=False, use_bw=False, gamma=1.0):
     """Print ASCII art to terminal with color."""
     width, height = image.size
 
-    for y in range(height):
+    for y in tqdm(range(height), desc="Printing ASCII art"):
         for x in range(width):
             pixel = image.getpixel((x, y))
             if use_bw:
