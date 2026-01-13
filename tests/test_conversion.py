@@ -5,7 +5,7 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PIL import Image
 
-from src.ascii_art_generator import conversion
+from src.pixcii import conversion
 
 
 class TestConversion(unittest.TestCase):

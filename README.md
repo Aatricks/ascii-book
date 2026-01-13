@@ -28,8 +28,8 @@ A powerful command-line tool to convert images into high-quality, colorized ASCI
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Aatricks/pyscii.git
-   cd pyscii
+   git clone https://github.com/Aatricks/pixcii.git
+   cd pixcii
    ```
 
 2. **Create a virtual environment** (recommended):
@@ -46,14 +46,14 @@ A powerful command-line tool to convert images into high-quality, colorized ASCI
    pip install .
    ```
 
-This installs the `pyscii` command globally in your environment.
+This installs the `pixcii` command globally in your environment.
 
 ## Usage
 
 ### Basic Syntax
 
 ```bash
-pyscii [OPTIONS] INPUT_PATH [OUTPUT_PATH]
+pixcii [OPTIONS] INPUT_PATH [OUTPUT_PATH]
 ```
 
 - `INPUT_PATH`: Path to the input image (PNG, JPG, etc.).
@@ -66,7 +66,7 @@ pyscii [OPTIONS] INPUT_PATH [OUTPUT_PATH]
 Convert an image to colorized ASCII art and save as a new image:
 
 ```bash
-pyscii input.png output.png
+pixcii input.png output.png
 ```
 
 #### Terminal Output
@@ -74,7 +74,7 @@ pyscii input.png output.png
 Display ASCII art directly in the terminal:
 
 ```bash
-pyscii input.png
+pixcii input.png
 ```
 
 #### Minimalistic Mode
@@ -82,13 +82,13 @@ pyscii input.png
 Isolate the subject and create a "sticker" effect:
 
 ```bash
-pyscii input.png output.png --minimalistic
+pixcii input.png output.png --minimalistic
 ```
 
 Use ML-based background removal for complex images:
 
 ```bash
-pyscii input.png output.png --minimalistic --bg-removal-method ml
+pixcii input.png output.png --minimalistic --bg-removal-method ml
 ```
 
 #### Custom Width
@@ -96,7 +96,7 @@ pyscii input.png output.png --minimalistic --bg-removal-method ml
 Control detail level by setting character width:
 
 ```bash
-pyscii input.png output.png --width 200
+pixcii input.png output.png --width 200
 ```
 
 #### Retro Style
@@ -104,7 +104,7 @@ pyscii input.png output.png --width 200
 Apply retro color quantization:
 
 ```bash
-pyscii input.png output.png --retro
+pixcii input.png output.png --retro
 ```
 
 #### Black and White
@@ -112,7 +112,7 @@ pyscii input.png output.png --retro
 Convert to grayscale ASCII art:
 
 ```bash
-pyscii input.png output.png --bw
+pixcii input.png output.png --bw
 ```
 
 #### Adjustments
@@ -120,7 +120,7 @@ pyscii input.png output.png --bw
 Fine-tune colors and brightness:
 
 ```bash
-pyscii input.png output.png --gamma 1.2 --brightness 1.1 --contrast 0.9
+pixcii input.png output.png --gamma 1.2 --brightness 1.1 --contrast 0.9
 ```
 
 ### Advanced Options
@@ -135,7 +135,7 @@ pyscii input.png output.png --gamma 1.2 --brightness 1.1 --contrast 0.9
 For a full list of options, run:
 
 ```bash
-pyscii --help
+pixcii --help
 ```
 
 ## Examples and Screenshots

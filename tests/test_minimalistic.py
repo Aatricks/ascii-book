@@ -5,7 +5,7 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PIL import Image
 
-from src.ascii_art_generator import minimalistic
+from src.pixcii import minimalistic
 
 
 class TestMinimalistic(unittest.TestCase):

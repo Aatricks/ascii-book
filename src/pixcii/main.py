@@ -1,5 +1,7 @@
 import argparse
+import os
 import sys
+from typing import Optional
 
 import numpy as np
 from PIL import Image
@@ -7,7 +9,8 @@ from PIL import Image
 from . import conversion, minimalistic
 
 
-def main():
+def parse_args():
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Convert images to ASCII art.")
     parser.add_argument("input_path", help="Path to the input image.")
     parser.add_argument("output_path", nargs='?', help="Path to save the output ASCII art image. If not provided, output to terminal.")
@@ -24,51 +27,69 @@ def main():
     parser.add_argument("--contrast", type=float, default=1.0, help="Contrast adjustment factor. ")
     parser.add_argument("--character-ratio", type=float, default=2.0, help="Height-to-width ratio for characters. Only for terminal output.")
     parser.add_argument("--max-height", type=int, default=48, help="Maximum height in characters. Only for terminal output.")
+    return parser.parse_args()
 
-    args = parser.parse_args()
 
-    import os
+def get_mask(image: Image.Image, args: argparse.Namespace) -> Optional[Image.Image]:
+    """Generate a background mask based on the selected method."""
+    if not args.minimalistic:
+        return None
 
-    args.input_path = os.path.abspath(args.input_path)
-    if args.output_path:
-        args.output_path = os.path.abspath(args.output_path)
+    if args.bg_removal_method == "simple":
+        return minimalistic.create_background_mask(image)
+    
+    # ML method
+    removed_bg_image = minimalistic.remove_background_ml(image, args.ml_model)
+    # Extract alpha channel to create a mask where 0 (fully transparent) is background
+    alpha = np.array(removed_bg_image.split()[-1])
+    background_mask = Image.fromarray((alpha == 0).astype(np.uint8) * 255)
+    return minimalistic.refine_mask(background_mask, args.dilation_kernel_size)
+
+
+def main():
+    args = parse_args()
+    input_path = os.path.abspath(args.input_path)
+    output_path = os.path.abspath(args.output_path) if args.output_path else None
 
     try:
-        image = conversion.load_image(args.input_path)
+        image = conversion.load_image(input_path)
         image = conversion.adjust_image(image, args.brightness, args.contrast, args.gamma)
     except FileNotFoundError:
-        print(f"Error: Input file not found at {args.input_path}", file=sys.stderr)
+        print(f"Error: Input file not found at {input_path}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"Error loading image: {e}", file=sys.stderr)
         sys.exit(1)
 
-    if args.output_path is None:
+    # Calculate target character ratio
+    char_ratio = args.character_ratio if output_path is None else conversion.get_character_ratio()
+    resized_image = conversion.resize_image(image, args.width, char_ratio)
+
+    if output_path is None:
         # Terminal output
-        resized_image = conversion.resize_image(image, args.width, args.character_ratio)
         conversion.print_ascii_art(resized_image, args.retro, args.bw, args.gamma)
-    else:
-        # Image output
-        resized_image = conversion.resize_image(image, args.width, conversion.get_character_ratio())
-        ascii_chars = conversion.image_to_ascii_chars(resized_image)
+        return
 
-        if args.minimalistic:
-            if args.bg_removal_method == "simple":
-                background_mask = minimalistic.create_background_mask(resized_image)
-                output_image = conversion.draw_ascii_art(resized_image, ascii_chars, background_mask, args.retro, args.bw, args.gamma)
-            else:
-                removed_bg_image = minimalistic.remove_background_ml(resized_image, args.ml_model)
-                background_mask = Image.fromarray((np.array(removed_bg_image.split()[-1]) == 0).astype(np.uint8) * 255)
-                refined_background_mask = minimalistic.refine_mask(background_mask, args.dilation_kernel_size)
-                output_image = conversion.draw_ascii_art(resized_image, ascii_chars, refined_background_mask, args.retro, args.bw, args.gamma)
-        else:
-            output_image = conversion.draw_ascii_art(resized_image, ascii_chars, use_retro=args.retro, use_bw=args.bw, gamma=args.gamma)
+    # Image output
+    ascii_chars = conversion.image_to_ascii_chars(resized_image)
+    background_mask = get_mask(resized_image, args)
+    
+    output_image = conversion.draw_ascii_art(
+        resized_image, 
+        ascii_chars, 
+        background_mask=background_mask, 
+        use_retro=args.retro, 
+        use_bw=args.bw, 
+        gamma=args.gamma
+    )
 
-        try:
-            output_image.save(args.output_path)
-        except IOError:
-            print(f"Error: Could not save output file to {args.output_path}", file=sys.stderr)
-            sys.exit(1)
+    try:
+        output_image.save(output_path)
+    except IOError as e:
+        print(f"Error saving output file: {e}", file=sys.stderr)
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
+
